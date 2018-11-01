@@ -1,0 +1,26 @@
+{
+   "id":1,
+   "firstName":"Victor",
+   "lastName":"Luna",
+   "company":"Newtoms",
+   "title":"Developer",
+   "email":"victor.luna@newtoms.com",
+   "status":"Created",
+   "links":[
+      {
+         "rel":"/linkrels/lead/info",
+         "uri":"/landingpage/lead/1234",
+         "method":"GET"
+      },
+      {
+         "rel":"/linkrels/lead/updateInfo",
+         "uri":"/landingpage/lead/1234",
+         "method":"PUT"
+      },
+      {
+         "rel":"/linkrels/lead/delete",
+         "uri":"/landingpage/lead/1234",
+         "method":"DELETE"
+      }
+   ]
+}

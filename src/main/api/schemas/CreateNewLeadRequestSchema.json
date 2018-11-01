@@ -1,0 +1,66 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://newtoms.com/root.json",
+  "type": "object",
+  "title": "Create New Lead Request Schema",
+  "required": [
+    "firstName",
+    "lastName",
+    "company",
+    "title",
+    "email"
+  ],
+  "properties": {
+    "firstName": {
+      "$id": "#/properties/firstName",
+      "type": "string",
+      "title": "The Firstname Schema",
+      "default": "",
+      "examples": [
+        "Victor"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "lastName": {
+      "$id": "#/properties/lastName",
+      "type": "string",
+      "title": "The Lastname Schema",
+      "default": "",
+      "examples": [
+        "Luna"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "company": {
+      "$id": "#/properties/company",
+      "type": "string",
+      "title": "The Company Schema",
+      "default": "",
+      "examples": [
+        "Newtoms"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The Title Schema",
+      "default": "",
+      "examples": [
+        "Developer"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "email": {
+      "$id": "#/properties/email",
+      "type": "string",
+      "title": "The Email Schema",
+      "default": "",
+      "examples": [
+        "victor.luna@newtoms.com"
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

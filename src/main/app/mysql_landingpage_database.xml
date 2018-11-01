@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <sub-flow name="mysql_landingpage_databaseSub_Flow">
+        <db:select config-ref="MySQL_Landingpage_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[SELECT idDocumentTemplates, Type, Title, Description, DownloadUrl
+FROM DocumentTemplates where idDocumentTemplates = #[flowVars.idDocumentTemplates];]]></db:parameterized-query>
+        </db:select>
+    </sub-flow>
+</mule>

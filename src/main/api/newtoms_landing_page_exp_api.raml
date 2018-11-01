@@ -1,0 +1,101 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/bd61be4a-c2b5-49ad-a910-33c7624b6afb # 
+title: newtoms_landing_page_exp_api
+version: 1.0.0
+protocols: [HTTP, HTTPS]
+mediaType: application/json
+
+schemas: 
+  createNewLeadRequestSchema: !include schemas/CreateNewLeadRequestSchema.json
+  createNewLeadResponseSchema: !include schemas/CreateNewLeadResponseSchema.json
+  landingPageTemplateConfigResponseSchema: !include schemas/LandingPageTemplateConfigResponseSchema.json
+  errorMessageSchema: !include schemas/ApiErrorMessageSchema.json
+
+/landingpage:
+  /lead:
+    post:
+      displayName: Create New Lead
+      description: Create a new Lead for newtoms
+      body:
+        application/json:
+          schema: createNewLeadRequestSchema
+          example: !include examples/CreateNewLeadRequest.json
+      responses:
+        201:
+          description: The Lead was created
+          body:
+            application/json:
+              schema: createNewLeadResponseSchema
+              example: !include examples/CreateNewLeadResponse.json
+        400:
+          description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+          body: 
+            application/json:
+              schema: errorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        401:
+          description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+          body: 
+            application/json:
+              schema: errorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        404:
+          description: The server has not found anything matching the Request-URI.
+          body: 
+            application/json:
+              schema: errorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        406:
+          description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+          body: 
+            application/json:
+              schema: errorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        500:
+          description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+          body: 
+            application/json:
+              schema: errorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+  /template:
+    /{id}:
+      get:
+        displayName: Get Landing Page Template
+        description: Get a Landing Page Template Configuration
+        responses:
+          200:
+            description: Return the Landin Page Template Configuration related to given id
+            body: 
+              application/json:
+                schema: landingPageTemplateConfigResponseSchema
+                example: !include examples/LandingPageTemplateConfigResponse.json
+          400:
+            description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+            body: 
+              application/json:
+                schema: errorMessageSchema
+                example: !include examples/ApiErrorMessage.json
+          401:
+            description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+            body: 
+              application/json:
+                schema: errorMessageSchema
+                example: !include examples/ApiErrorMessage.json
+          404:
+            description: The server has not found anything matching the Request-URI.
+            body: 
+              application/json:
+                schema: errorMessageSchema
+                example: !include examples/ApiErrorMessage.json
+          406:
+            description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+            body: 
+              application/json:
+                schema: errorMessageSchema
+                example: !include examples/ApiErrorMessage.json
+          500:
+            description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+            body: 
+              application/json:
+                schema: errorMessageSchema
+                example: !include examples/ApiErrorMessage.json
