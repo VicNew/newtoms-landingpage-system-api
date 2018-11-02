@@ -6,6 +6,21 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <sub-flow name="setExpectedInsertedNewLead">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="expectedInsertedNewLead"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+   idLeads: 1,
+   firstName:"Victor",
+   lastName:"Luna",
+   company:"Newtoms",
+   title:"Developer",
+   email:"victor.luna@newtoms.com"
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
     <sub-flow name="assertPayloadWithLeadDataAndGeneratedId">
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <munit:assert-payload-equals message="It is not the expected inserted Lead data" expectedValue="{&quot;firstName&quot;:&quot;Victor&quot;,&quot;lastName&quot;:&quot;Luna&quot;,&quot;company&quot;:&quot;Newtoms&quot;,&quot;title&quot;:&quot;Developer&quot;,&quot;email&quot;:&quot;victor.luna@newtoms.com&quot;,&quot;idLeads&quot;:1}" doc:name="Assert Payload with inserted new Lead Data"/>
@@ -60,6 +75,6 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     </sub-flow>
     <sub-flow name="assertForExpectedDocumentTemplateResponse">
         <json:object-to-json-transformer doc:name="Object to JSON"/>
-        <munit:assert-payload-equals message="It is not the expected Document Template" expectedValue="{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert for expected Payload with Document Templete Configuration"/>
+        <munit:assert-payload-equals message="It is not the expected Document Template" expectedValue="{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert for expected Payload with Document Templete Configuration"/>
     </sub-flow>
 </mule>
