@@ -84,8 +84,8 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <flow-ref name="getFirstDocumentTempleteFromList" doc:name="Flow-ref to getFirstDocumentTempleteFromList"/>
         <flow-ref name="assertForExpectedDocumentTemplateResponse" doc:name="assertForExpectedDocumentTemplateResponse"/>
     </munit:test>
-    <sub-flow name="assertForExpectedDocumentTemplateResponse">
-        <json:object-to-json-transformer doc:name="Object to JSON"/>
-        <munit:assert-payload-equals message="It is not the expected Document Template" expectedValue="{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert for expected Payload with Document Templete Configuration"/>
-    </sub-flow>
+<!--     <sub-flow name="assertForExpectedDocumentTemplateResponse"> -->
+<!--         <json:object-to-json-transformer doc:name="Object to JSON"/> -->
+<!--         <munit:assert-payload-equals message="It is not the expected Document Template" expectedValue="{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert for expected Payload with Document Templete Configuration"/> -->
+<!--     </sub-flow> -->
 </mule>
