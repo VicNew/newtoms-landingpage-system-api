@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:newtoms_landing_page_business.xml"/>
+        <spring:import resource="classpath:mysql_landingpage_database_config.xml"/>
+        <spring:import resource="classpath:mysql_landingpage_database.xml"/>
+        <spring:import resource="classpath:messages-for-test-suite.xml"/>
+    </spring:beans>
+    <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
+    <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
+    <global-property name="mysql.user" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.password" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.schema" value="newtoms-landingpage" doc:name="Global Property"/>
+    <munit:before-test name="newtoms_landing_page_business-test-suiteBefore_Test" description="Before tests actions">
+        <flow-ref name="setExpectedDocumentTemplatesByIdList" doc:name="setExpectedDocumentTemplatesByIdList"/>
+    </munit:before-test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenReturnAResponse" description="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenReturnAResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - getDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setGetLandingPageTemplateByIdRequest" doc:name="setGetLandingPageTemplateByIdRequest"/>
+        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to getDocumentTemplateConfigByIdForLandingPage"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenTheExpectedDocumentTemplate" description="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenTheExpectedDocumentTemplate">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - getDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setGetLandingPageTemplateByIdRequest" doc:name="setGetLandingPageTemplateByIdRequest"/>
+        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to getDocumentTemplateConfigByIdForLandingPage"/>
+        <flow-ref name="assertForExpectedDocumentTemplateResponse" doc:name="assertForExpectedDocumentTemplateResponse"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenGetDocumentTemplateFromSystem" description="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenGetDocumentTemplateFromSystem">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - getDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setGetLandingPageTemplateByIdRequest" doc:name="setGetLandingPageTemplateByIdRequest"/>
+        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to getDocumentTemplateConfigByIdForLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify getDocumentConfigurationById Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenGetJustTheFirstDocumentTemplateFromSystem" description="GivenADocumentTemplateIdWhenGetDocumentTemplateConfigByIdForLandingPageThenGetJustTheFirstDocumentTemplateFromSystem">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - getDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setGetLandingPageTemplateByIdRequest" doc:name="setGetLandingPageTemplateByIdRequest"/>
+        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to getDocumentTemplateConfigByIdForLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify getFirstDocumentTempleteFromList Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('getFirstDocumentTempleteFromList')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAListOfDocumentTemplatesWhenGetFirstDocumentTempleteFromListThenReturnADocumentTemplate" description="GivenAListOfDocumentTemplatesWhenGetFirstDocumentTempleteFromListThenReturnADocumentTemplate">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <set-payload value="#[flowVars.expectedDocumentTemplatesById]" doc:name="Set Payload with Document Templates by Id List"/>
+        <flow-ref name="getFirstDocumentTempleteFromList" doc:name="Flow-ref to getFirstDocumentTempleteFromList"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenAListOfDocumentTemplatesWhenGetFirstDocumentTempleteFromListThenReturnExpectedDocumentTemplate" description="GivenAListOfDocumentTemplatesWhenGetFirstDocumentTempleteFromListThenReturnExpectedDocumentTemplate">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <set-payload value="#[flowVars.expectedDocumentTemplatesById]" doc:name="Set Payload with Document Templates by Id List"/>
+        <flow-ref name="getFirstDocumentTempleteFromList" doc:name="Flow-ref to getFirstDocumentTempleteFromList"/>
+        <flow-ref name="assertForExpectedDocumentTemplateResponse" doc:name="assertForExpectedDocumentTemplateResponse"/>
+    </munit:test>
+    <sub-flow name="assertForExpectedDocumentTemplateResponse">
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-payload-equals message="It is not the expected Document Template" expectedValue="{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert for expected Payload with Document Templete Configuration"/>
+    </sub-flow>
+</mule>

@@ -5,6 +5,11 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <sub-flow name="setGetLandingPageTemplateByIdRequest">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+    </sub-flow>
     <sub-flow name="setExpectedDocumentTemplatesByIdList">
         <dw:transform-message doc:name="Transform Message">
             <dw:set-variable variableName="expectedDocumentTemplatesById"><![CDATA[%dw 1.0
