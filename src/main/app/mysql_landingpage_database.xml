@@ -6,8 +6,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <sub-flow name="mysql_landingpage_databaseSub_Flow">
-        <db:select config-ref="MySQL_Landingpage_Configuration" doc:name="Database">
+    <sub-flow name="getDocumentConfigurationById">
+        <db:select config-ref="MySQL_Landingpage_Configuration" doc:name="Select DocumentTemplates By Id">
             <db:parameterized-query><![CDATA[SELECT idDocumentTemplates, Type, Title, Description, DownloadUrl
 FROM DocumentTemplates where idDocumentTemplates = #[flowVars.idDocumentTemplates];]]></db:parameterized-query>
         </db:select>

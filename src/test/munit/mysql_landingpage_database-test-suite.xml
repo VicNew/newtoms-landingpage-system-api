@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:mysql_landingpage_database.xml"/>
+        <spring:import resource="classpath:mysql_landingpage_database_config.xml"/>
+        <spring:import resource="classpath:messages-for-test-suite.xml"/>
+    </spring:beans>
+    <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
+    <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
+    <global-property name="mysql.user" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.password" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.schema" value="newtoms-landingpage" doc:name="Global Property"/>
+    <munit:before-test name="mysql_landingpage_database-test-suiteBefore_Test" description="Before tests actions">
+        <flow-ref name="setExpectedDocumentTemplatesByIdList" doc:name="setExpectedDocumentTemplatesByIdList"/>
+    </munit:before-test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnTheConfiguration" description="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnTheConfiguration">
+        <mock:when messageProcessor="db:select" doc:name="Mock - Select DocumentTemplates By Id ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnOneConfiguration" description="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnOneConfiguration">
+        <mock:when messageProcessor="db:select" doc:name="Mock - Select DocumentTemplates By Id ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <munit:assert-on-equals message="It is not the expected list size" expectedValue="#[1]" actualValue="#[payload.size()]" doc:name="Assert True for List of documents equals to one"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnRightConfiguration" description="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnRightConfiguration">
+        <mock:when messageProcessor="db:select" doc:name="Mock - Select DocumentTemplates By Id ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-on-equals message="It is not the expected payload" expectedValue="[{&quot;idDocumentTemplates&quot;:1,&quot;Title&quot;:&quot;Best practices for microservices&quot;,&quot;Type&quot;:&quot;Whitepaper&quot;,&quot;Description&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;DownloadUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}]" actualValue="#[payload]" doc:name="Assert Equals for the right configuration"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenDocumentTemplateIdIsPassedAsAVariable" description="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenDocumentTemplateIdIsPassedAsAVariable">
+        <mock:spy messageProcessor="db:select" doc:name="Spy - Select DocumentTemplates By Id">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:assertions-before-call>
+                <munit:assert-on-equals message="it is not expected value for idDocumentTemplates variable " expectedValue="#[1]" actualValue="#[flowVars.idDocumentTemplates]" doc:name="Assert Equals for idDocumentTemplates variable"/>
+            </mock:assertions-before-call>
+        </mock:spy>
+        <mock:when messageProcessor="db:select" doc:name="Mock - Select DocumentTemplates By Id ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenConnectorConfigIsWellDefined" description="GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenConnectorConfigIsWellDefined">
+        <mock:when messageProcessor="db:select" doc:name="Mock - Select DocumentTemplates By Id ">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <mock:verify-call messageProcessor="db:select" doc:name="Verify Call - Select DocumentTemplates By Id">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Select DocumentTemplates By Id']"/>
+                <mock:with-attribute name="queryTimeout" whereValue="0"/>
+                <mock:with-attribute name="transactionalAction" whereValue="JOIN_IF_POSSIBLE"/>
+                <mock:with-attribute name="streaming" whereValue="false"/>
+                <mock:with-attribute name="target" whereValue="#[null]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="Functional-GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnTheConfiguration" description="Functional-GivenADocumentTemplateIdWhenGetDocumentConfigurationByIdThenReturnTheConfiguration" ignore="true">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <set-variable variableName="idDocumentTemplates" value="#[1]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="getDocumentConfigurationById" doc:name="Flow-ref to getDocumentConfigurationById"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+</mule>
