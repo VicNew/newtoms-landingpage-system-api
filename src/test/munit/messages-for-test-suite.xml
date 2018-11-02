@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <sub-flow name="assertPayloadWithLeadDataAndGeneratedId">
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-payload-equals message="It is not the expected inserted Lead data" expectedValue="{&quot;firstName&quot;:&quot;Victor&quot;,&quot;lastName&quot;:&quot;Luna&quot;,&quot;company&quot;:&quot;Newtoms&quot;,&quot;title&quot;:&quot;Developer&quot;,&quot;email&quot;:&quot;victor.luna@newtoms.com&quot;,&quot;idLeads&quot;:1}" doc:name="Assert Payload with inserted new Lead Data"/>
+    </sub-flow>
+    <sub-flow name="expectedInsertNewLeadDbResponse">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="expectedInsertNewLeadDbResponse"><![CDATA[%dw 1.0
+%output application/java
+---
+[
+	{
+		GENERATED_KEY: 1
+	}
+]]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="getNewLeadRequest">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+   firstName:"Victor",
+   lastName:"Luna",
+   company:"Newtoms",
+   title:"Developer",
+   email:"victor.luna@newtoms.com"
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
     <sub-flow name="setGetLandingPageTemplateByIdRequest">
         <munit:set payload="#[]" doc:name="Set Message"/>
         <munit:set-null-payload doc:name="Set Null Payload"/>
