@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
-http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
     <munit:config name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_business.xml"/>
@@ -106,8 +105,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         </mock:when>
         <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
         <flow-ref name="createANewLeadFromLandingPage" doc:name="Flow-ref to createANewLeadFromLandingPage"/>
-        <json:object-to-json-transformer doc:name="Object to JSON"/>
-        <munit:assert-payload-equals message="It is not the expected Lead data with generated id" expectedValue="{&quot;idLeads&quot;:1,&quot;firstName&quot;:&quot;Victor&quot;,&quot;lastName&quot;:&quot;Luna&quot;,&quot;company&quot;:&quot;Newtoms&quot;,&quot;title&quot;:&quot;Developer&quot;,&quot;email&quot;:&quot;victor.luna@newtoms.com&quot;}" doc:name="Assert Payload for expected Lead data with generated Id"/>
+        <flow-ref name="assertForACompleteLeadResponse" doc:name="assertForACompleteLeadResponse"/>
     </munit:test>
     <munit:test name="GivenANewLeadDataRequestWhenCreateANewLeadFromLandingPageThenInsertANewLeadWasCalled" description="GivenANewLeadDataRequestWhenCreateANewLeadFromLandingPageThenInsertANewLeadWasCalled">
         <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - insertANewLead">
@@ -123,5 +121,32 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
                 <mock:with-attribute name="name" whereValue="#[matchContains('insertANewLead')]"/>
             </mock:with-attributes>
         </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenANewLeadDataRequestWhenCreateANewLeadFromLandingPageThenBuildNewLeadWithIdCompleteResponseWasCalled" description="GivenANewLeadDataRequestWhenCreateANewLeadFromLandingPageThenBuildNewLeadWithIdCompleteResponseWasCalled">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - insertANewLead">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('insertANewLead')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedInsertedNewLead]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <flow-ref name="createANewLeadFromLandingPage" doc:name="Flow-ref to createANewLeadFromLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify buildNewLeadWithIdCompleteResponse Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('buildNewLeadWithIdCompleteResponse')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnInsertedLeadDataWithIdWhenBuildNewLeadWithIdCompleteResponseThenReturnAResponse" description="GivenAnInsertedLeadDataWithIdWhenBuildNewLeadWithIdCompleteResponseThenReturnAResponse">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <set-payload value="#[flowVars.expectedInsertedNewLead]" doc:name="Set Inserted Lead with Id Payload"/>
+        <flow-ref name="buildNewLeadWithIdCompleteResponse" doc:name="Flow-ref to buildNewLeadWithIdCompleteResponse"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenAnInsertedLeadDataWithIdWhenBuildNewLeadWithIdCompleteResponseThenReturnACompleteLeadResponse" description="GivenAnInsertedLeadDataWithIdWhenBuildNewLeadWithIdCompleteResponseThenReturnACompleteLeadResponse">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <set-payload value="#[flowVars.expectedInsertedNewLead]" doc:name="Set Inserted Lead with Id Payload"/>
+        <flow-ref name="buildNewLeadWithIdCompleteResponse" doc:name="Flow-ref to buildNewLeadWithIdCompleteResponse"/>
+        <flow-ref name="assertForACompleteLeadResponse" doc:name="assertForACompleteLeadResponse"/>
     </munit:test>
 </mule>

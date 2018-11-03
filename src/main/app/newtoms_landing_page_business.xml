@@ -21,5 +21,39 @@ payload[0]]]></dw:set-payload>
     </sub-flow>
     <sub-flow name="createANewLeadFromLandingPage">
         <flow-ref name="insertANewLead" doc:name="insertANewLead"/>
+        <flow-ref name="buildNewLeadWithIdCompleteResponse" doc:name="buildNewLeadWithIdCompleteResponse"/>
+    </sub-flow>
+    <sub-flow name="buildNewLeadWithIdCompleteResponse">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+   id:payload.idLeads,
+   firstName:payload.firstName,
+   lastName:payload.lastName,
+   company:payload.company,
+   title:payload.title,
+   email:payload.email,
+   status:"Created",
+   links:[
+      {
+         rel:"/linkrels/lead/info",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"GET"
+      },
+      {
+         rel:"/linkrels/lead/updateInfo",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"PUT"
+      },
+      {
+         rel:"/linkrels/lead/delete",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"DELETE"
+      }
+   ]
+}]]></dw:set-payload>
+        </dw:transform-message>
     </sub-flow>
 </mule>

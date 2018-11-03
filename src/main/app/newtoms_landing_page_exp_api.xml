@@ -27,9 +27,15 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         <json:object-to-json-transformer doc:name="Object to JSON"/>
     </sub-flow>
     <flow name="post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
-        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-        <set-payload value="{&#xD;&#xA;   &quot;id&quot;:1,&#xD;&#xA;   &quot;firstName&quot;:&quot;Victor&quot;,&#xD;&#xA;   &quot;lastName&quot;:&quot;Luna&quot;,&#xD;&#xA;   &quot;company&quot;:&quot;Newtoms&quot;,&#xD;&#xA;   &quot;title&quot;:&quot;Developer&quot;,&#xD;&#xA;   &quot;email&quot;:&quot;victor.luna@newtoms.com&quot;,&#xD;&#xA;   &quot;status&quot;:&quot;Created&quot;,&#xD;&#xA;   &quot;links&quot;:[&#xD;&#xA;      {&#xD;&#xA;         &quot;rel&quot;:&quot;/linkrels/lead/info&quot;,&#xD;&#xA;         &quot;uri&quot;:&quot;/landingpage/lead/1234&quot;,&#xD;&#xA;         &quot;method&quot;:&quot;GET&quot;&#xD;&#xA;      },&#xD;&#xA;      {&#xD;&#xA;         &quot;rel&quot;:&quot;/linkrels/lead/updateInfo&quot;,&#xD;&#xA;         &quot;uri&quot;:&quot;/landingpage/lead/1234&quot;,&#xD;&#xA;         &quot;method&quot;:&quot;PUT&quot;&#xD;&#xA;      },&#xD;&#xA;      {&#xD;&#xA;         &quot;rel&quot;:&quot;/linkrels/lead/delete&quot;,&#xD;&#xA;         &quot;uri&quot;:&quot;/landingpage/lead/1234&quot;,&#xD;&#xA;         &quot;method&quot;:&quot;DELETE&quot;&#xD;&#xA;      }&#xD;&#xA;   ]&#xD;&#xA;}" doc:name="Set Payload"/>
+        <flow-ref name="postLeadFromLandingPage" doc:name="postLeadFromLandingPage"/>
+
     </flow>
+    <sub-flow name="postLeadFromLandingPage">
+        <json:json-to-object-transformer doc:name="JSON to Object" returnClass="java.util.Map"/>
+        <flow-ref name="createANewLeadFromLandingPage" doc:name="createANewLeadFromLandingPage"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="set Content-Type Property"/>
+    </sub-flow>
     <apikit:mapping-exception-strategy name="newtoms_landing_page_exp_api-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
