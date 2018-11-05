@@ -14,6 +14,11 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <spring:import resource="classpath:mysql_landingpage_database.xml"/>
         <spring:import resource="classpath:messages-for-test-suite.xml"/>
     </spring:beans>
+    <global-property name="https.port" value="443" doc:name="Global Property"/>
+    <global-property name="https.keystore.path" value="keystore_dev.jks" doc:name="Global Property"/>
+    <global-property name="https.keystore.alias" value="mule" doc:name="Global Property"/>
+    <global-property name="https.keystore.keyPassword" value="muleD3vN3wt0ms" doc:name="Global Property"/>
+    <global-property name="https.keystore.password" value="muleD3vN3wt0ms" doc:name="Global Property"/>
     <global-property name="http.port" value="8081" doc:name="Global Property"/>
     <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
     <global-property name="mysql.port" value="3306" doc:name="Global Property"/>

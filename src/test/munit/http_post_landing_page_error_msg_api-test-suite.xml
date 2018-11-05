@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
-http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_exp_api.xml"/>
@@ -16,11 +17,22 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <spring:import resource="classpath:mysql_landingpage_database.xml"/>
         <spring:import resource="classpath:messages-for-test-suite.xml"/>
     </spring:beans>
-    <http:request-config name="HTTP_Raml_Test_Request_Configuration" host="localhost" port="${http.port}" basePath="/api" doc:name="HTTP Request Configuration">
+    <http:request-config name="HTTP_Raml_Test_Request_Configuration" host="localhost" port="${https.port}" basePath="/api" doc:name="HTTP Request Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store insecure="true"/>
+        </tls:context>
         <http:raml-api-configuration location="newtoms_landing_page_exp_api.raml"/>
     </http:request-config>
-    <http:request-config name="HTTP_Invalid_Request_Configuration" host="localhost" port="${http.port}" basePath="/api" doc:name="HTTP Request Configuration"/>
-    <global-property name="http.port" value="8081" doc:name="Global Property"/>
+    <http:request-config name="HTTP_Invalid_Request_Configuration" host="localhost" port="${https.port}" basePath="/api" doc:name="HTTP Request Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store insecure="true"/>
+        </tls:context>
+    </http:request-config>
+    <global-property name="https.port" value="443" doc:name="Global Property"/>
+    <global-property name="https.keystore.path" value="keystore_dev.jks" doc:name="Global Property"/>
+    <global-property name="https.keystore.alias" value="mule" doc:name="Global Property"/>
+    <global-property name="https.keystore.keyPassword" value="muleD3vN3wt0ms" doc:name="Global Property"/>
+    <global-property name="https.keystore.password" value="muleD3vN3wt0ms" doc:name="Global Property"/>
     <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
     <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
     <global-property name="mysql.user" value="root" doc:name="Global Property"/>

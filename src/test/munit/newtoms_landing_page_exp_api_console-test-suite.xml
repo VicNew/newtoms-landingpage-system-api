@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_exp_api_console.xml"/>
         <spring:import resource="classpath:newtoms_landing_page_exp_api_config.xml"/>
     </spring:beans>
-    <http:request-config name="HTTP_Console_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration">
+    <http:request-config name="HTTP_Console_Request_Configuration" host="localhost" port="${https.port}" doc:name="HTTP Request Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store insecure="true"/>
+        </tls:context>
     </http:request-config>
-    <global-property name="http.port" value="8081" doc:name="Global Property"/>
+    <global-property name="https.port" value="443" doc:name="Global Property"/>
+    <global-property name="https.keystore.path" value="keystore_dev.jks" doc:name="Global Property"/>
+    <global-property name="https.keystore.alias" value="mule" doc:name="Global Property"/>
+    <global-property name="https.keystore.keyPassword" value="muleD3vN3wt0ms" doc:name="Global Property"/>
+    <global-property name="https.keystore.password" value="muleD3vN3wt0ms" doc:name="Global Property"/>
     <munit:test name="newtoms_landing_page_exp_api_console-test-suite-newtoms_landing_page_exp_api-consoleTest" description="Test">
         <munit:set payload="#[]" doc:name="Set Message"/>
         <munit:set-null-payload doc:name="Set Null Payload"/>
