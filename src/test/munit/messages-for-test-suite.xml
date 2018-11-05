@@ -114,4 +114,130 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <munit:assert-payload-equals message="It is not the expected Lead data with generated id" expectedValue="{&quot;id&quot;:1,&quot;firstName&quot;:&quot;Victor&quot;,&quot;lastName&quot;:&quot;Luna&quot;,&quot;company&quot;:&quot;Newtoms&quot;,&quot;title&quot;:&quot;Developer&quot;,&quot;email&quot;:&quot;victor.luna@newtoms.com&quot;,&quot;status&quot;:&quot;Created&quot;,&quot;links&quot;:[{&quot;rel&quot;:&quot;/linkrels/lead/info&quot;,&quot;uri&quot;:&quot;/landingpage/lead/1&quot;,&quot;method&quot;:&quot;GET&quot;},{&quot;rel&quot;:&quot;/linkrels/lead/updateInfo&quot;,&quot;uri&quot;:&quot;/landingpage/lead/1&quot;,&quot;method&quot;:&quot;PUT&quot;},{&quot;rel&quot;:&quot;/linkrels/lead/delete&quot;,&quot;uri&quot;:&quot;/landingpage/lead/1&quot;,&quot;method&quot;:&quot;DELETE&quot;}]}" doc:name="Assert Payload for expected Lead data with generated Id"/>
     </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage500">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage500"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"500",
+            code:"ERR500",
+            status:"500",
+            title:"Internal Server Error",
+            detail:"Internal Server Error For Munit TEST. (java.lang.Exception).",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage406">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage406"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"406",
+            code:"ERR406",
+            status:"406",
+            title:"Not Acceptable",
+            detail:"The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage405">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage405"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"405",
+            code:"ERR405",
+            status:"405",
+            title:"Method Not Allowed",
+            detail:"The method specified in the Request-Line is not allowed for the resource identified by the Request-URI. The response MUST include an Allow header containing a list of valid methods for the requested resource.",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage404">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage404"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"404",
+            code:"ERR404",
+            status:"404",
+            title:"Not Found",
+            detail:"The server has not found anything matching the Request-URI.",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage400">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage400"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"400",
+            code:"ERR400",
+            status:"400",
+            title:"Bad Request",
+            detail:"The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="setExpectedVarErrorMessage415">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-variable variableName="errorMessage415"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+   error:{
+      errors:[
+         {
+            id:"415",
+            code:"ERR415",
+            status:"415",
+            title:"Unsupported Media Type",
+            detail:"The server is refusing to service the request because the entity of the request is in a format not supported by the requested resource for the requested method.",
+            href:"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}]]></dw:set-variable>
+        </dw:transform-message>
+    </sub-flow>
 </mule>

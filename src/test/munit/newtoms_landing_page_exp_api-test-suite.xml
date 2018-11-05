@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
     <munit:config name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_exp_api.xml"/>
@@ -219,6 +218,22 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
                 <mock:with-attribute name="doc:name" whereValue="#['set Content-Type Property']"/>
                 <mock:with-attribute name="propertyName" whereValue="Content-Type"/>
                 <mock:with-attribute name="value" whereValue="application/json"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-configTest" description="Test">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - postLeadFromLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('postLeadFromLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedCreatedLeadCompleteResponse]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('postLeadFromLandingPage')]"/>
             </mock:with-attributes>
         </mock:verify-call>
     </munit:test>
