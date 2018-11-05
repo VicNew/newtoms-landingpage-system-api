@@ -6,16 +6,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
-    <http:listener-config name="newtoms_landing_page_exp_api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
-    <apikit:config name="newtoms_landing_page_exp_api-config" raml="newtoms_landing_page_exp_api.raml" consoleEnabled="false" doc:name="Router"/>
     <flow name="newtoms_landing_page_exp_api-main">
         <http:listener config-ref="newtoms_landing_page_exp_api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
         <apikit:router config-ref="newtoms_landing_page_exp_api-config" doc:name="APIkit Router"/>
         <exception-strategy ref="newtoms_landing_page_exp_api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
-    </flow>
-    <flow name="newtoms_landing_page_exp_api-console">
-        <http:listener config-ref="newtoms_landing_page_exp_api-httpListenerConfig" path="/console/*" doc:name="HTTP"/>
-        <apikit:console config-ref="newtoms_landing_page_exp_api-config" doc:name="APIkit Console"/>
     </flow>
     <flow name="get:/landingpage/template/{id}:newtoms_landing_page_exp_api-config">
         <flow-ref name="getLandingPageTemplateByGivenIdAsJson" doc:name="getLandingPageTemplateByGivenIdAsJson"/>

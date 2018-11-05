@@ -10,15 +10,17 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
     <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_exp_api.xml"/>
+        <spring:import resource="classpath:newtoms_landing_page_exp_api_config.xml"/>
         <spring:import resource="classpath:newtoms_landing_page_business.xml"/>
         <spring:import resource="classpath:mysql_landingpage_database_config.xml"/>
         <spring:import resource="classpath:mysql_landingpage_database.xml"/>
         <spring:import resource="classpath:messages-for-test-suite.xml"/>
     </spring:beans>
-    <http:request-config name="HTTP_Raml_Test_Request_Configuration" host="localhost" port="8081" basePath="/api" doc:name="HTTP Request Configuration">
+    <http:request-config name="HTTP_Raml_Test_Request_Configuration" host="localhost" port="${http.port}" basePath="/api" doc:name="HTTP Request Configuration">
         <http:raml-api-configuration location="newtoms_landing_page_exp_api.raml"/>
     </http:request-config>
-    <http:request-config name="HTTP_Invalid_Request_Configuration" host="localhost" port="8081" basePath="/api" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="HTTP_Invalid_Request_Configuration" host="localhost" port="${http.port}" basePath="/api" doc:name="HTTP Request Configuration"/>
+    <global-property name="http.port" value="8081" doc:name="Global Property"/>
     <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
     <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
     <global-property name="mysql.user" value="root" doc:name="Global Property"/>

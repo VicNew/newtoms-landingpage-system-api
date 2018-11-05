@@ -8,11 +8,13 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
     <munit:config name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:newtoms_landing_page_exp_api.xml"/>
+        <spring:import resource="classpath:newtoms_landing_page_exp_api_config.xml"/>
         <spring:import resource="classpath:newtoms_landing_page_business.xml"/>
         <spring:import resource="classpath:mysql_landingpage_database_config.xml"/>
         <spring:import resource="classpath:mysql_landingpage_database.xml"/>
         <spring:import resource="classpath:messages-for-test-suite.xml"/>
     </spring:beans>
+    <global-property name="http.port" value="8081" doc:name="Global Property"/>
     <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
     <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
     <global-property name="mysql.user" value="root" doc:name="Global Property"/>
