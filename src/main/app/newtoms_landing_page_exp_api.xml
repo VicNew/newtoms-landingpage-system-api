@@ -20,27 +20,27 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         <logger message="Landin Page Template with ID: #[flowVars.idDocumentTemplates] Content Title: #[payload.Title]" level="INFO" doc:name="Logger" />
         <json:object-to-json-transformer doc:name="Object to JSON" />
     </sub-flow>
-    <flow name="put:/landingpage/template/{id}:newtoms_landing_page_exp_api-config">
+    <flow name="put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-config">
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="updateLandingPageTemplateByGivenId"/>
+    </flow>
+    <sub-flow name="updateLandingPageTemplateByGivenId">
+        <json:json-to-object-transformer doc:name="JSON to Object"/>
+        <flow-ref name="buildUpdateRequestWithGivenId" doc:name="buildUpdateRequestWithGivenId"/>
+        <flow-ref name="updateDocumentTemplateConfigByIdForLandingPage" doc:name="updateDocumentTemplateConfigByIdForLandingPage"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="set Content-Type Property"/>
+    </sub-flow>
+    <sub-flow name="buildUpdateRequestWithGivenId">
+        <set-variable variableName="documentId" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="set documentId Variable"/>
         <dw:transform-message doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
-%output application/json
+%output application/java
 ---
-{
-   documentId:1,
-   documentType:"Whitepaper",
-   documentTitle:"Best practices for microservices",
-   documentDescription:"Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.",
-   documentUrl:"https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf"
-}]]></dw:set-payload>
+{ documentId: flowVars.documentId } ++ payload]]></dw:set-payload>
         </dw:transform-message>
-        <set-property propertyName="Content-Type" value="application/json" doc:name="set Content-Type Property"/>
-
-    </flow>
+    </sub-flow>
     <flow name="post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
         <flow-ref name="postLeadFromLandingPage" doc:name="postLeadFromLandingPage" />
-    </flow>
-    <flow name="put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-config">
-        <set-payload value="{&#xD;&#xA;   &quot;documentId&quot;:1,&#xD;&#xA;   &quot;documentType&quot;:&quot;Whitepaper&quot;,&#xD;&#xA;   &quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&#xD;&#xA;   &quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&#xD;&#xA;   &quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;&#xD;&#xA;}" doc:name="Set Payload"/>
     </flow>
     <sub-flow name="postLeadFromLandingPage">
         <json:json-to-object-transformer doc:name="JSON to Object" returnClass="java.util.Map" />
