@@ -28,6 +28,7 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
     <munit:before-test name="newtoms_landing_page_exp_api-test-suiteBefore_Test" description="Before tests actions">
         <flow-ref name="setExpectedDocumentTemplatesByIdList" doc:name="setExpectedDocumentTemplatesByIdList"/>
         <flow-ref name="setExpectedCreatedLeadCompleteResponse" doc:name="setExpectedCreatedLeadCompleteResponse"/>
+        <flow-ref name="setExpectedUpdateDocumentTemplatesById" doc:name="setExpectedUpdateDocumentTemplatesById"/>
     </munit:before-test>
     <munit:test name="GivenATemplateIdWhenGetLandingPageTemplateByGivenIdAsJsonThenReturnAResponse" description="GivenATemplateIdWhenGetLandingPageTemplateByGivenIdAsJsonThenReturnAResponse">
         <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - getDocumentTemplateConfigByIdForLandingPage">
@@ -241,6 +242,141 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify Call">
             <mock:with-attributes>
                 <mock:with-attribute name="name" whereValue="#[matchContains('postLeadFromLandingPage')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAResponse" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAnUpdateResponse" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAnUpdateResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <munit:assert-payload-equals message="It is not the expected Payload" expectedValue="{&quot;documentId&quot;:1,&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert Payload for expected Update Response"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenTransformJsonRequestToObject" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenTransformJsonRequestToObject">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <mock:verify-call messageProcessor="json:json-to-object-transformer" doc:name="Verify JSON to Object Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['JSON to Object']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenBuildASingleRequestWithGivenId" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenBuildASingleRequestWithGivenId">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify updateDocumentTemplateConfigByIdForLandingPage Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenUpdateDocument" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenUpdateDocument">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify updateDocumentTemplateConfigByIdForLandingPage Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAJsonResponse" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAJsonResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <mock:verify-call messageProcessor="json:object-to-json-transformer" doc:name="Verify Object to JSON Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Object to JSON']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAContentTypeHeader" description="GivenAnUpdateDocumentTemplateByIdRequestWhenUpdateLandingPageTemplateByGivenIdThenReturnAContentTypeHeader">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentTemplateConfigByIdForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentTemplateConfigByIdForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
+        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set Content-Type Property']"/>
+                <mock:with-attribute name="propertyName" whereValue="Content-Type"/>
+                <mock:with-attribute name="value" whereValue="application/json"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenReturnAResponse" description="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenReturnAResponse">
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="buildUpdateRequestWithGivenId" doc:name="Flow-ref to buildUpdateRequestWithGivenId"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenReturnAUpdateRequestWithGivenId" description="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenReturnAUpdateRequestWithGivenId">
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="buildUpdateRequestWithGivenId" doc:name="Flow-ref to buildUpdateRequestWithGivenId"/>
+        <munit:assert-payload-equals message="It is not the expected Update Requeste with given Id" expectedValue="#[flowVars.expectedUpdateDocumentTemplatesById]" doc:name="Assert Payload for expected Update Request"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenSetInAVariableTheGivenId" description="GivenAnUpdateDocumentTemplateByIdRequestWhenBuildUpdateRequestWithGivenIdThenSetInAVariableTheGivenId">
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="buildUpdateRequestWithGivenId" doc:name="Flow-ref to buildUpdateRequestWithGivenId"/>
+        <mock:verify-call messageProcessor="mule:set-variable" doc:name="Verify set documentId Variable Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set documentId Variable']"/>
+                <mock:with-attribute name="variableName" whereValue="documentId"/>
+                <mock:with-attribute name="value" whereValue="#[1]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-configTest" description="Test">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateLandingPageTemplateByGivenId">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateLandingPageTemplateByGivenId')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
+        <flow-ref name="put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify updateLandingPageTemplateByGivenId Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateLandingPageTemplateByGivenId')]"/>
             </mock:with-attributes>
         </mock:verify-call>
     </munit:test>

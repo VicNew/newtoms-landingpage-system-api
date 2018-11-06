@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
     <munit:config name="munit" doc:name="MUnit configuration"/>
@@ -148,5 +147,44 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <set-payload value="#[flowVars.expectedInsertedNewLead]" doc:name="Set Inserted Lead with Id Payload"/>
         <flow-ref name="buildNewLeadWithIdCompleteResponse" doc:name="Flow-ref to buildNewLeadWithIdCompleteResponse"/>
         <flow-ref name="assertForACompleteLeadResponse" doc:name="assertForACompleteLeadResponse"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenReturnAResponse" description="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenReturnAResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentConfigurationWithId" doc:name="setUpdateDocumentConfigurationWithId"/>
+        <flow-ref name="updateDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to updateDocumentTemplateConfigByIdForLandingPage"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenReturnSamePayload" description="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenReturnSamePayload">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentConfigurationWithId" doc:name="setUpdateDocumentConfigurationWithId"/>
+        <set-variable variableName="expectedPayload" value="#[payload]" doc:name="set expectedPayload Variable"/>
+        <flow-ref name="updateDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to updateDocumentTemplateConfigByIdForLandingPage"/>
+        <munit:assert-payload-equals message="It is not the expected Payload" expectedValue="#[flowVars.expectedPayload]" doc:name="Assert for same Payload response"/>
+    </munit:test>
+    <munit:test name="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenUpdateWasCalled" description="GivenAnUpdateDocumentConfigRequestWhenUpdateDocumentTemplateConfigByIdForLandingPageThenUpdateWasCalled">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - updateDocumentConfigurationById">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setUpdateDocumentConfigurationWithId" doc:name="setUpdateDocumentConfigurationWithId"/>
+        <set-variable variableName="expectedPayload" value="#[payload]" doc:name="set expectedPayload Variable"/>
+        <flow-ref name="updateDocumentTemplateConfigByIdForLandingPage" doc:name="Flow-ref to updateDocumentTemplateConfigByIdForLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify updateDocumentConfigurationById Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('updateDocumentConfigurationById')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
     </munit:test>
 </mule>

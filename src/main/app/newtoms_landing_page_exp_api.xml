@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
-	xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <flow name="newtoms_landing_page_exp_api-main">
-        <http:listener config-ref="newtoms_landing_page_exp_api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
-        <apikit:router config-ref="newtoms_landing_page_exp_api-config" doc:name="APIkit Router"/>
-        <exception-strategy ref="newtoms_landing_page_exp_api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+        <http:listener config-ref="newtoms_landing_page_exp_api-httpListenerConfig" path="/api/*" doc:name="HTTP" />
+        <apikit:router config-ref="newtoms_landing_page_exp_api-config" doc:name="APIkit Router" />
+        <exception-strategy ref="newtoms_landing_page_exp_api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
     </flow>
     <flow name="get:/landingpage/template/{id}:newtoms_landing_page_exp_api-config">
-        <flow-ref name="getLandingPageTemplateByGivenIdAsJson" doc:name="getLandingPageTemplateByGivenIdAsJson"/>
-
+        <flow-ref name="getLandingPageTemplateByGivenIdAsJson" doc:name="getLandingPageTemplateByGivenIdAsJson" />
     </flow>
     <sub-flow name="getLandingPageTemplateByGivenIdAsJson">
-        <set-variable variableName="idDocumentTemplates" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="set idDocumentTemplates Variable"/>
-        <logger message="Landin Page Template with ID: #[flowVars.idDocumentTemplates]" level="INFO" doc:name="Logger"/>
-        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="getDocumentTemplateConfigByIdForLandingPage"/>
-        <logger message="Landin Page Template with ID: #[flowVars.idDocumentTemplates] Content Title: #[payload.Title]" level="INFO" doc:name="Logger"/>
-        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <set-variable variableName="idDocumentTemplates" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="set idDocumentTemplates Variable" />
+        <logger message="Landin Page Template with ID: #[flowVars.idDocumentTemplates]" level="INFO" doc:name="Logger" />
+        <flow-ref name="getDocumentTemplateConfigByIdForLandingPage" doc:name="getDocumentTemplateConfigByIdForLandingPage" />
+        <logger message="Landin Page Template with ID: #[flowVars.idDocumentTemplates] Content Title: #[payload.Title]" level="INFO" doc:name="Logger" />
+        <json:object-to-json-transformer doc:name="Object to JSON" />
     </sub-flow>
-    <flow name="post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
-        <flow-ref name="postLeadFromLandingPage" doc:name="postLeadFromLandingPage"/>
-
+    <flow name="put:/landingpage/template/{id}:application/json:newtoms_landing_page_exp_api-config">
+        <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="updateLandingPageTemplateByGivenId"/>
     </flow>
-    <sub-flow name="postLeadFromLandingPage">
-        <json:json-to-object-transformer doc:name="JSON to Object" returnClass="java.util.Map"/>
-        <flow-ref name="createANewLeadFromLandingPage" doc:name="createANewLeadFromLandingPage"/>
+    <sub-flow name="updateLandingPageTemplateByGivenId">
+        <json:json-to-object-transformer doc:name="JSON to Object"/>
+        <flow-ref name="buildUpdateRequestWithGivenId" doc:name="buildUpdateRequestWithGivenId"/>
+        <flow-ref name="updateDocumentTemplateConfigByIdForLandingPage" doc:name="updateDocumentTemplateConfigByIdForLandingPage"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <set-property propertyName="Content-Type" value="application/json" doc:name="set Content-Type Property"/>
     </sub-flow>
+    <sub-flow name="buildUpdateRequestWithGivenId">
+        <set-variable variableName="documentId" value="#[message.inboundProperties.'http.uri.params'.id]" doc:name="set documentId Variable"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{ documentId: flowVars.documentId } ++ payload]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
+    <flow name="post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
+        <flow-ref name="postLeadFromLandingPage" doc:name="postLeadFromLandingPage" />
+    </flow>
+    <sub-flow name="postLeadFromLandingPage">
+        <json:json-to-object-transformer doc:name="JSON to Object" returnClass="java.util.Map" />
+        <flow-ref name="createANewLeadFromLandingPage" doc:name="createANewLeadFromLandingPage" />
+        <json:object-to-json-transformer doc:name="Object to JSON" />
+        <set-property propertyName="Content-Type" value="application/json" doc:name="set Content-Type Property" />
+    </sub-flow>
     <sub-flow name="setResponseContentType">
-        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
     </sub-flow>
     <apikit:mapping-exception-strategy name="newtoms_landing_page_exp_api-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
@@ -57,8 +73,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
-
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
         <apikit:mapping statusCode="405">
             <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
@@ -81,8 +96,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
-
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
         <apikit:mapping statusCode="415">
             <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
@@ -105,8 +119,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
-
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
         <apikit:mapping statusCode="406">
             <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
@@ -129,8 +142,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
-
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
         <apikit:mapping statusCode="400">
             <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
@@ -153,12 +165,11 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
-
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
         <apikit:mapping statusCode="500">
-            <apikit:exception value="org.mule.api.MessagingException"/>
-            <set-variable variableName="errorMessage" value="#[exception.getMessage()]" doc:name="set errorMessage Variable"/>
+            <apikit:exception value="org.mule.api.MessagingException" />
+            <set-variable variableName="errorMessage" value="#[exception.getMessage()]" doc:name="set errorMessage Variable" />
             <dw:transform-message doc:name="Transform Message">
                 <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
@@ -178,7 +189,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    }
 }]]></dw:set-payload>
             </dw:transform-message>
-            <flow-ref name="setResponseContentType" doc:name="setResponseContentType"/>
+            <flow-ref name="setResponseContentType" doc:name="setResponseContentType" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 </mule>
