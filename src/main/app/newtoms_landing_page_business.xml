@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <sub-flow name="getDocumentTemplateConfigByIdForLandingPage">
+        <flow-ref name="getDocumentConfigurationById" doc:name="getDocumentConfigurationById"/>
+        <flow-ref name="getFirstDocumentTempleteFromList" doc:name="getFirstDocumentTempleteFromList"/>
+    </sub-flow>
+    <sub-flow name="getFirstDocumentTempleteFromList">
+        <dw:transform-message doc:name="Transform Message" metadata:id="135f8650-1f73-4ce9-b20e-8eae0c21e915">
+            <dw:input-payload mimeType="application/java"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload[0]]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
+    <sub-flow name="createANewLeadFromLandingPage">
+        <flow-ref name="insertANewLead" doc:name="insertANewLead"/>
+        <flow-ref name="buildNewLeadWithIdCompleteResponse" doc:name="buildNewLeadWithIdCompleteResponse"/>
+    </sub-flow>
+    <sub-flow name="buildNewLeadWithIdCompleteResponse">
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+   id:payload.idLeads,
+   firstName:payload.firstName,
+   lastName:payload.lastName,
+   company:payload.company,
+   title:payload.title,
+   email:payload.email,
+   status:"Created",
+   links:[
+      {
+         rel:"/linkrels/lead/info",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"GET"
+      },
+      {
+         rel:"/linkrels/lead/updateInfo",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"PUT"
+      },
+      {
+         rel:"/linkrels/lead/delete",
+         uri:"/landingpage/lead/" ++ payload.idLeads,
+         method:"DELETE"
+      }
+   ]
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </sub-flow>
+</mule>

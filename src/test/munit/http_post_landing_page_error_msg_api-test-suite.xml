@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <munit:config mock-connectors="false" mock-inbounds="false" name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:newtoms_landing_page_exp_api.xml"/>
+        <spring:import resource="classpath:newtoms_landing_page_exp_api_config.xml"/>
+        <spring:import resource="classpath:newtoms_landing_page_business.xml"/>
+        <spring:import resource="classpath:mysql_landingpage_database_config.xml"/>
+        <spring:import resource="classpath:mysql_landingpage_database.xml"/>
+        <spring:import resource="classpath:messages-for-test-suite.xml"/>
+    </spring:beans>
+    <http:request-config name="HTTP_Raml_Test_Request_Configuration" host="localhost" port="${https.port}" basePath="/api" doc:name="HTTP Request Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store insecure="true"/>
+        </tls:context>
+        <http:raml-api-configuration location="newtoms_landing_page_exp_api.raml"/>
+    </http:request-config>
+    <http:request-config name="HTTP_Invalid_Request_Configuration" host="localhost" port="${https.port}" basePath="/api" doc:name="HTTP Request Configuration" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store insecure="true"/>
+        </tls:context>
+    </http:request-config>
+    <global-property name="https.port" value="443" doc:name="Global Property"/>
+    <global-property name="https.keystore.path" value="keystore_dev.jks" doc:name="Global Property"/>
+    <global-property name="https.keystore.alias" value="mule" doc:name="Global Property"/>
+    <global-property name="https.keystore.keyPassword" value="muleD3vN3wt0ms" doc:name="Global Property"/>
+    <global-property name="https.keystore.password" value="muleD3vN3wt0ms" doc:name="Global Property"/>
+    <global-property name="mysql.host" value="127.0.0.1" doc:name="Global Property"/>
+    <global-property name="mysql.port" value="3306" doc:name="Global Property"/>
+    <global-property name="mysql.user" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.password" value="root" doc:name="Global Property"/>
+    <global-property name="mysql.schema" value="newtoms-landingpage" doc:name="Global Property"/>
+    <munit:before-test name="poc_nisc_service_delivery_system_api-test-suiteBefore_Test" description="Before tests actions">
+        <flow-ref name="setExpectedVarErrorMessage415" doc:name="setExpectedVarErrorMessage415"/>
+        <flow-ref name="setExpectedVarErrorMessage400" doc:name="setExpectedVarErrorMessage400"/>
+        <flow-ref name="setExpectedVarErrorMessage404" doc:name="setExpectedVarErrorMessage404"/>
+        <flow-ref name="setExpectedVarErrorMessage405" doc:name="setExpectedVarErrorMessage405"/>
+        <flow-ref name="setExpectedVarErrorMessage406" doc:name="setExpectedVarErrorMessage406"/>
+        <flow-ref name="setExpectedVarErrorMessage500" doc:name="setExpectedVarErrorMessage500"/>
+    </munit:before-test>
+    <munit:test name="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA415ErrorMessage" description="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA415ErrorMessage">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage415]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAImplementation" description="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAImplementation">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="0" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS415" description="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS415">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[415]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 415 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType" description="FuntionalTest-GivenANullNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA400ErrorMessage" description="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA400ErrorMessage">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage400]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation" description="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="0" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS400" description="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS400">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[400]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 400 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType" description="FuntionalTest-GivenAnInvalidCreateNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnA404ErrorMessage" description="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnA404ErrorMessage">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/leads" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage404]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation" description="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/leads" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="0" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnAHTTPSTATUS404" description="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnAHTTPSTATUS404">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/leads" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[404]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 404 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnExpectedContentType" description="FuntionalTest-GivenANewLeadRequestWhenCallInvalidPostRequestToLandingPageAPIThenReturnExpectedContentType">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/leads" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnA405ErrorMessage" description="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnA405ErrorMessage">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/lead" method="PATCH" doc:name="HTTP-PATCH-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage405]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation" description="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/lead" method="PATCH" doc:name="HTTP-PATCH-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="0" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnAHTTPSTATUS405" description="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnAHTTPSTATUS405">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/lead" method="PATCH" doc:name="HTTP-PATCH-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[405]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 405 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnExpectedContentType" description="FuntionalTest-GivenANewLeadRequestWhenPATCHRequestToLandingPageAPIThenReturnExpectedContentType">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Invalid_Request_Configuration" path="/landingpage/lead" method="PATCH" doc:name="HTTP-PATCH-CreateLead">
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA406ErrorMessage" description="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnA406ErrorMessage">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:request-builder>
+                <http:header headerName="Accept" value="#['application/xml']"/>
+            </http:request-builder>
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage406]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation" description="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenVerifyThatTheRequestWasNotRoutedToAnImplementation">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:request-builder>
+                <http:header headerName="Accept" value="#['application/xml']"/>
+            </http:request-builder>
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="0" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS406" description="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnAHTTPSTATUS406">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:request-builder>
+                <http:header headerName="Accept" value="#['application/xml']"/>
+            </http:request-builder>
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[406]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 406 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType" description="FuntionalTest-GivenAnInvalidAcceptContentTypeAsHeaderInNewLeadRequestWhenPostRequestToLandingPageAPIThenReturnExpectedContentType">
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:request-builder>
+                <http:header headerName="Accept" value="#['application/xml']"/>
+            </http:request-builder>
+            <http:failure-status-code-validator values="500"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnA500ErrorMessage" description="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnA500ErrorMessage">
+        <mock:throw-an exception-ref="#[new java.lang.Exception(&quot;Internal Server Error For Munit TEST.&quot;)]" whenCalling="mule:flow" doc:name="Throw an Exception when call - post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:throw-an>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="400"/>
+        </http:request>
+        <byte-array-to-object-transformer doc:name="Byte Array to Object"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+        <munit:assert-payload-equals expectedValue="#[flowVars.errorMessage500]" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenVerifyThatTheRequestWasRoutedToAnImplementation" description="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenVerifyThatTheRequestWasRoutedToAnImplementation">
+        <mock:throw-an exception-ref="#[new java.lang.Exception(&quot;Internal Server Error For Munit TEST.&quot;)]" whenCalling="mule:flow" doc:name="Throw an Exception when call - post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:throw-an>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="400"/>
+        </http:request>
+        <mock:verify-call messageProcessor="mule:flow" times="1" doc:name="Verify Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnAHTTPSTATUS500" description="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnAHTTPSTATUS500">
+        <mock:throw-an exception-ref="#[new java.lang.Exception(&quot;Internal Server Error For Munit TEST.&quot;)]" whenCalling="mule:flow" doc:name="Throw an Exception when call - post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:throw-an>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="400"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected HTTP Status Code for the response" expectedValue="#[500]" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Equals for Expected HTTP 500 Status Code Response"/>
+    </munit:test>
+    <munit:test name="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnExpectedContentType" description="FuntionalTest-GivenANewLeadRequestWhenPostRequestToLandingPageAPIAndSometingFailThenReturnExpectedContentType">
+        <mock:throw-an exception-ref="#[new java.lang.Exception(&quot;Internal Server Error For Munit TEST.&quot;)]" whenCalling="mule:flow" doc:name="Throw an Exception when call - post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('post:/landingpage/lead:application/json:newtoms_landing_page_exp_api-config')]"/>
+            </mock:with-attributes>
+        </mock:throw-an>
+        <flow-ref name="getNewLeadRequest" doc:name="getNewLeadRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <http:request config-ref="HTTP_Raml_Test_Request_Configuration" path="/landingpage/lead" method="POST" doc:name="HTTP-POST-CreateLead">
+            <http:failure-status-code-validator values="400"/>
+        </http:request>
+        <munit:assert-on-equals message="It is not the expected Content-Type for the response" expectedValue="#['application/json']" actualValue="#[message.inboundProperties.'Content-Type']" doc:name="Assert Equals for Expected Content-Type Response"/>
+    </munit:test>
+</mule>

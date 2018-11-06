@@ -6,5 +6,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <db:mysql-config name="MySQL_Landingpage_Configuration" host="127.0.0.1" port="3306" user="root" password="root" database="newtoms-landingpage" doc:name="MySQL Configuration"/>
+    <db:mysql-config name="MySQL_Landingpage_Configuration" host="${mysql.host}" port="${mysql.port}" user="${mysql.user}" password="${mysql.password}" database="${mysql.schema}" doc:name="MySQL Configuration">
+        <reconnect/>
+    </db:mysql-config>
 </mule>
