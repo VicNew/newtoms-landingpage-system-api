@@ -1,0 +1,55 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://newtoms.com/root.json",
+  "type": "object",
+  "title": "Update Landing Page Template Configuration Request Schema",
+  "required": [
+    "documentType",
+    "documentTitle",
+    "documentDescription",
+    "documentUrl"
+  ],
+  "properties": {
+    "documentType": {
+      "$id": "#/properties/documentType",
+      "type": "string",
+      "title": "The Documenttype Schema",
+      "default": "",
+      "examples": [
+        "Whitepaper"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "documentTitle": {
+      "$id": "#/properties/documentTitle",
+      "type": "string",
+      "title": "The Documenttitle Schema",
+      "default": "",
+      "examples": [
+        "Best practices for microservices"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "documentDescription": {
+      "$id": "#/properties/documentDescription",
+      "type": "string",
+      "title": "The Documentdescription Schema",
+      "default": "",
+      "examples": [
+        "Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises."
+      ],
+      "pattern": "^(.*)$"
+    },
+    "documentUrl": {
+      "$id": "#/properties/documentUrl",
+      "type": "string",
+      "title": "The Documenturl Schema",
+      "default": "",
+      "examples": [
+        "https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf"
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

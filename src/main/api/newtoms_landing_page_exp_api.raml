@@ -9,11 +9,47 @@ schemas:
   createNewLeadRequestSchema: !include schemas/CreateNewLeadRequestSchema.json
   createNewLeadResponseSchema: !include schemas/CreateNewLeadResponseSchema.json
   landingPageTemplateConfigResponseSchema: !include schemas/LandingPageTemplateConfigResponseSchema.json
+  updateLandingPageTemplateConfigRequestSchema: !include schemas/UpdateLandingPageTemplateConfigRequestSchema.json
   errorMessageSchema: !include schemas/ApiErrorMessageSchema.json
+
+traits: 
+  errorHandleable:
+    responses:
+      400:
+        description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+        body: 
+          application/json:
+            schema: errorMessageSchema
+            example: !include examples/ApiErrorMessage.json 
+      401:
+        description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+        body: 
+          application/json:
+            schema: errorMessageSchema
+            example: !include examples/ApiErrorMessage.json
+      404:
+        description: The server has not found anything matching the Request-URI.
+        body: 
+          application/json:
+            schema: errorMessageSchema
+            example: !include examples/ApiErrorMessage.json
+      406:
+        description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+        body: 
+          application/json:
+            schema: errorMessageSchema
+            example: !include examples/ApiErrorMessage.json
+      500:
+        description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+        body: 
+          application/json:
+            schema: errorMessageSchema
+            example: !include examples/ApiErrorMessage.json
 
 /landingpage:
   /lead:
     post:
+      is: ['errorHandleable']
       displayName: Create New Lead
       description: Create a new Lead for newtoms
       body:
@@ -27,39 +63,10 @@ schemas:
             application/json:
               schema: createNewLeadResponseSchema
               example: !include examples/CreateNewLeadResponse.json
-        400:
-          description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
-          body: 
-            application/json:
-              schema: errorMessageSchema
-              example: !include examples/ApiErrorMessage.json
-        401:
-          description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
-          body: 
-            application/json:
-              schema: errorMessageSchema
-              example: !include examples/ApiErrorMessage.json
-        404:
-          description: The server has not found anything matching the Request-URI.
-          body: 
-            application/json:
-              schema: errorMessageSchema
-              example: !include examples/ApiErrorMessage.json
-        406:
-          description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
-          body: 
-            application/json:
-              schema: errorMessageSchema
-              example: !include examples/ApiErrorMessage.json
-        500:
-          description: The server encountered an unexpected condition which prevented it from fulfilling the request.
-          body: 
-            application/json:
-              schema: errorMessageSchema
-              example: !include examples/ApiErrorMessage.json
   /template:
     /{id}:
       get:
+        is: ['errorHandleable']
         displayName: Get Landing Page Template
         description: Get a Landing Page Template Configuration
         responses:
@@ -69,33 +76,18 @@ schemas:
               application/json:
                 schema: landingPageTemplateConfigResponseSchema
                 example: !include examples/LandingPageTemplateConfigResponse.json
-          400:
-            description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+      put:
+        is: ['errorHandleable']
+        displayName: Update Landing Page Template
+        description: Update a Landing Page Template Configuration
+        body:
+          application/json:
+            schema: updateLandingPageTemplateConfigRequestSchema
+            example: !include examples/UpdateLandingPageTemplateConfigRequest.json
+        responses:
+          200:
+            description: Return Updated Landin Page Template Configuration related to given id
             body: 
               application/json:
-                schema: errorMessageSchema
-                example: !include examples/ApiErrorMessage.json
-          401:
-            description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
-            body: 
-              application/json:
-                schema: errorMessageSchema
-                example: !include examples/ApiErrorMessage.json
-          404:
-            description: The server has not found anything matching the Request-URI.
-            body: 
-              application/json:
-                schema: errorMessageSchema
-                example: !include examples/ApiErrorMessage.json
-          406:
-            description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
-            body: 
-              application/json:
-                schema: errorMessageSchema
-                example: !include examples/ApiErrorMessage.json
-          500:
-            description: The server encountered an unexpected condition which prevented it from fulfilling the request.
-            body: 
-              application/json:
-                schema: errorMessageSchema
-                example: !include examples/ApiErrorMessage.json
+                schema: landingPageTemplateConfigResponseSchema
+                example: !include examples/LandingPageTemplateConfigResponse.json
