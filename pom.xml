@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.newtoms</groupId>
+	<groupId>18fb7fde-d35c-4b58-b297-07464da7ce2b.team-venezuela</groupId>
 	<artifactId>newtoms-landingpage-system-api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>mule</packaging>
 	<name>Mule newtoms-landingpage-system-api Application</name>
 
@@ -16,6 +16,7 @@
     	<mule.tools.version>1.2</mule.tools.version>
 	<munit.version>1.3.7</munit.version>
     <mule.munit.support.version>3.9.1</mule.munit.support.version>
+    <type>example</type>
     </properties>
 
 	<build>
