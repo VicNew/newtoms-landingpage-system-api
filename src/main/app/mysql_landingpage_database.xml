@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <sub-flow name="getDocumentConfigurationById">
         <db:select config-ref="MySQL_Landingpage_Configuration" doc:name="Select DocumentTemplates By Id">
             <db:parameterized-query><![CDATA[SELECT idDocumentTemplates, Type, Title, Description, DownloadUrl
@@ -19,6 +20,7 @@ FROM DocumentTemplates where idDocumentTemplates = #[flowVars.idDocumentTemplate
             <db:parameterized-query><![CDATA[INSERT INTO Leads (`idLeads`, `FirstName`, `LastName`, `Company`, `Title`, `Email`)
 VALUES (null, #[payload.firstName], #[payload.lastName], #[payload.company], #[payload.title], #[payload.email]);]]></db:parameterized-query>
         </db:insert>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
         <flow-ref name="addGeneratedIdLeadToPayload" doc:name="addGeneratedIdLeadToPayload"/>
     </sub-flow>
     <sub-flow name="addGeneratedIdLeadToPayload">
