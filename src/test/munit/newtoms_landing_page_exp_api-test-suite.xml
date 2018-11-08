@@ -50,7 +50,7 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
             <mock:with-attributes>
                 <mock:with-attribute name="name" whereValue="#[matchContains('getDocumentTemplateConfigByIdForLandingPage')]"/>
             </mock:with-attributes>
-            <mock:then-return payload="#[flowVars.expectedDocumentTemplatesById[0]]" mimeType="application/java"/>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
         </mock:when>
         <munit:set payload="#[]" doc:name="Set Message">
             <munit:inbound-properties>
