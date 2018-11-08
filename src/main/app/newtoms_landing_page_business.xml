@@ -16,7 +16,13 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
-payload[0]]]></dw:set-payload>
+{
+   documentId:payload[0].idDocumentTemplates,
+   documentType:payload[0].Type,
+   documentTitle:payload[0].Title,
+   documentDescription:payload[0].Description,
+   documentUrl:payload[0].DownloadUrl
+}]]></dw:set-payload>
         </dw:transform-message>
     </sub-flow>
     <sub-flow name="createANewLeadFromLandingPage">
