@@ -8,11 +8,22 @@ mediaType: application/json
 schemas: 
   createNewLeadRequestSchema: !include schemas/CreateNewLeadRequestSchema.json
   createNewLeadResponseSchema: !include schemas/CreateNewLeadResponseSchema.json
+  createLandingPageTemplateConfigRequestSchema: !include schemas/CreateLandingPageTemplateConfigRequestSchema.json
   landingPageTemplateConfigResponseSchema: !include schemas/LandingPageTemplateConfigResponseSchema.json
   updateLandingPageTemplateConfigRequestSchema: !include schemas/UpdateLandingPageTemplateConfigRequestSchema.json
   errorMessageSchema: !include schemas/ApiErrorMessageSchema.json
 
 traits: 
+  corsPolicyable:
+    responses: 
+      204:
+        headers: 
+          Access-Control-Allow-Origin:
+            default: http://localhost
+          Access-Control-Allow-Methods:
+            default: GET,HEAD,PUT,PATCH,POST,DELETE
+          Access-Control-Allow-Headers:
+            default: Origin, X-Requested-With, Content-Type
   errorHandleable:
     responses:
       400:
@@ -48,6 +59,10 @@ traits:
 
 /landingpage:
   /lead:
+    options:
+        displayName: Get Landing Page Template Cross-origins HTTP
+        description: Cross-origins HTTP requests (CORS) let you request a resource from a different domain.
+        is: ['corsPolicyable']
     post:
       is: ['errorHandleable']
       displayName: Create New Lead
@@ -57,14 +72,37 @@ traits:
           schema: createNewLeadRequestSchema
           example: !include examples/CreateNewLeadRequest.json
       responses:
-        201:
+        200:
           description: The Lead was created
           body:
             application/json:
               schema: createNewLeadResponseSchema
               example: !include examples/CreateNewLeadResponse.json
   /template:
+    options:
+        displayName: Get Landing Page Template Cross-origins HTTP
+        description: Cross-origins HTTP requests (CORS) let you request a resource from a different domain.
+        is: ['corsPolicyable']
+    post:
+      is: ['errorHandleable']
+      displayName: Create New Landing Page Template
+      description: Create a Landing Page Template Configuration
+      body: 
+        application/json:
+          schema: createLandingPageTemplateConfigRequestSchema
+          example: !include examples/CreateLandingPageTemplateConfigRequest.json
+      responses: 
+        201:
+          description: The Landing Page Template Configuration was created
+          body: 
+            application/json:
+              schema: landingPageTemplateConfigResponseSchema
+              example: !include examples/LandingPageTemplateConfigResponse.json
     /{id}:
+      options:
+        displayName: Get Landing Page Template Cross-origins HTTP
+        description: Cross-origins HTTP requests (CORS) let you request a resource from a different domain.
+        is: ['corsPolicyable']
       get:
         is: ['errorHandleable']
         displayName: Get Landing Page Template

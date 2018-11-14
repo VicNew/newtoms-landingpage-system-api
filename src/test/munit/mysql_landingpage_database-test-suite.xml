@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
     <munit:config name="munit" doc:name="MUnit configuration"/>
     <spring:beans>
         <spring:import resource="classpath:mysql_landingpage_database.xml"/>
@@ -238,7 +237,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <flow-ref name="setUpdateDocumentConfigurationWithId" doc:name="setUpdateDocumentConfigurationWithId"/>
         <flow-ref name="updateDocumentConfigurationById" doc:name="Flow-ref to updateDocumentConfigurationById"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
-        <munit:assert-payload-equals message="It is not the expected payload" expectedValue="{&quot;documentId&quot;:1,&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert Payload for same Payload"/>
+        <munit:assert-payload-equals message="It is not the expected payload" expectedValue="{&quot;documentId&quot;:1,&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert Payload for same Payload"/>
     </munit:test>
     <munit:test name="GivenAUpdateDocumentConfigurationWhenupdateDocumentConfigurationByIdThenUpdateComponentIsWellConfigured" description="GivenAUpdateDocumentConfigurationWhenupdateDocumentConfigurationByIdThenUpdateComponentIsWellConfigured">
         <mock:when messageProcessor="db:update" doc:name="Mock - Update DocumentTemplates by Id">
@@ -283,5 +282,128 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
                 <mock:with-attribute name="value" whereValue="#[0]"/>
             </mock:with-attributes>
         </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenReturnAResponse" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenReturnAResponse">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenReturnSameRequestWithGeneratedId" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenReturnSameRequestWithGeneratedId">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-payload-equals message="It is not tyhe expected creation response" expectedValue="{&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;,&quot;idDocumentTemplates&quot;:1}" doc:name="Assert Payload for expected Creation Response"/>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenInsertSystemQuery" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenInsertSystemQuery">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <mock:verify-call messageProcessor="db:insert" doc:name="Verify Insert new DocumentTemplates Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+                <mock:with-attribute name="queryTimeout" whereValue="0"/>
+                <mock:with-attribute name="transactionalAction" whereValue="JOIN_IF_POSSIBLE"/>
+                <mock:with-attribute name="autoGeneratedKeys" whereValue="true"/>
+                <mock:with-attribute name="bulkMode" whereValue="false"/>
+                <mock:with-attribute name="autoGeneratedKeysColumnIndexes" whereValue="#['']"/>
+                <mock:with-attribute name="autoGeneratedKeysColumnNames" whereValue="idDocumentTemplates"/>
+                <mock:with-attribute name="target" whereValue="idDocumentTemplates"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenCreateAVariableToStoreGerneratedId" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenCreateAVariableToStoreGerneratedId">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <mock:verify-call messageProcessor="mule:set-variable" doc:name="Verify set idDocumentTemplates Variable Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set idDocumentTemplates Variable']"/>
+                <mock:with-attribute name="variableName" whereValue="idDocumentTemplates"/>
+                <mock:with-attribute name="value" whereValue="#[0]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenTransformToJsonInsertResponse" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenTransformToJsonInsertResponse">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <mock:verify-call messageProcessor="json:object-to-json-transformer" doc:name="Verify Object to JSON Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Object to JSON']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenAddGeneratedIdToDocumentConfigRequest" description="GivenACreateDocumentRequestWhenInsertNewDocumentTemplateConfigurationThenAddGeneratedIdToDocumentConfigRequest">
+        <mock:when messageProcessor="db:insert" doc:name="Mock - Update Insert new DocumentTemplates">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Insert new DocumentTemplates']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[samePayload()]">
+                <mock:invocation-properties>
+                    <mock:invocation-property key="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" mimeType="application/java"/>
+                </mock:invocation-properties>
+            </mock:then-return>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="Flow-ref to insertNewDocumentTemplateConfiguration"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify addGeneratedIdToDocumentConfigRequest Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('addGeneratedIdToDocumentConfigRequest')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenAddGeneratedIdToDocumentConfigRequestThenReturnSamePayloadWithId" description="GivenACreateDocumentConfigRequestWhenAddGeneratedIdToDocumentConfigRequestThenReturnSamePayloadWithId">
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <set-variable variableName="idDocumentTemplates" value="#[flowVars.expectedInsertNewLeadDbResponse]" doc:name="set idDocumentTemplates Variable"/>
+        <flow-ref name="addGeneratedIdToDocumentConfigRequest" doc:name="Flow-ref to addGeneratedIdToDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <munit:assert-payload-equals message="It is not the expected payload" expectedValue="{&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company &#8211; no matter its size or what industry it is in &#8211; is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;,&quot;idDocumentTemplates&quot;:1}" doc:name="Assert Payload"/>
     </munit:test>
 </mule>

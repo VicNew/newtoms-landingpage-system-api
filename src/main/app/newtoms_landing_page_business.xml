@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:spring="http://www.springframework.org/schema/beans" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <sub-flow name="createDocumentTemplateConfigForLandingPage">
+        <flow-ref name="insertNewDocumentTemplateConfiguration" doc:name="insertNewDocumentTemplateConfiguration"/>
+    </sub-flow>
     <sub-flow name="getDocumentTemplateConfigByIdForLandingPage">
         <flow-ref name="getDocumentConfigurationById" doc:name="getDocumentConfigurationById"/>
         <flow-ref name="getFirstDocumentTempleteFromList" doc:name="getFirstDocumentTempleteFromList"/>
     </sub-flow>
     <sub-flow name="getFirstDocumentTempleteFromList">
-        <dw:transform-message doc:name="Transform Message" metadata:id="135f8650-1f73-4ce9-b20e-8eae0c21e915">
+        <dw:transform-message doc:name="Transform Message" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" metadata:id="135f8650-1f73-4ce9-b20e-8eae0c21e915">
             <dw:input-payload mimeType="application/java"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java

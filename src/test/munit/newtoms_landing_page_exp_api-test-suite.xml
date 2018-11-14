@@ -336,11 +336,9 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         </mock:when>
         <flow-ref name="setUpdateDocumentTemplateByIdRequest" doc:name="setUpdateDocumentTemplateByIdRequest"/>
         <flow-ref name="updateLandingPageTemplateByGivenId" doc:name="Flow-ref to updateLandingPageTemplateByGivenId"/>
-        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify setResponseHeaders Call">
             <mock:with-attributes>
-                <mock:with-attribute name="doc:name" whereValue="#['set Content-Type Property']"/>
-                <mock:with-attribute name="propertyName" whereValue="Content-Type"/>
-                <mock:with-attribute name="value" whereValue="application/json"/>
+                <mock:with-attribute name="name" whereValue="#[matchContains('setResponseHeaders')]"/>
             </mock:with-attributes>
         </mock:verify-call>
     </munit:test>
@@ -377,6 +375,204 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify updateLandingPageTemplateByGivenId Call">
             <mock:with-attributes>
                 <mock:with-attribute name="name" whereValue="#[matchContains('updateLandingPageTemplateByGivenId')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenReturnAResponse" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenReturnAResponse">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenReturnACreatedResponseWithId" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenReturnACreatedResponseWithId">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <munit:assert-payload-equals message="It is not the expected Created Response" expectedValue="{&quot;documentId&quot;:1,&quot;documentType&quot;:&quot;Whitepaper&quot;,&quot;documentTitle&quot;:&quot;Best practices for microservices&quot;,&quot;documentDescription&quot;:&quot;Today's business environment is extraordinarily competitive. No company – no matter its size or what industry it is in – is safe from disruption. To mitigate this risk, it's important to consider implementing microservices best practices in order to change quickly, innovate easily, and meet competition wherever it arises.&quot;,&quot;documentUrl&quot;:&quot;https://www.mulesoft.com/sites/default/files/resource-assets/wp_Best%20Practices%20for%20Microservices%20Whitepaper%20Research.pdf&quot;}" doc:name="Assert Payload for Created Response"/>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenCallCreateDocumentProcess" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenCallCreateDocumentProcess">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify createDocumentTemplateConfigForLandingPage Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenTransformRequestToObjectPayload" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenTransformRequestToObjectPayload">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <mock:verify-call messageProcessor="json:json-to-object-transformer" doc:name="Verify JSON to Object Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['JSON to Object']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenTransformResponseToJsonPayload" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenTransformResponseToJsonPayload">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <mock:verify-call messageProcessor="json:object-to-json-transformer" doc:name="Verify Object to JSON Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Object to JSON']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenSetResponseHeaders" description="GivenACreateDocumentConfigRequestWhenPostANewLandingPageThenSetResponseHeaders">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - createDocumentTemplateConfigForLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('createDocumentTemplateConfigForLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="postANewLandingPage" doc:name="Flow-ref to postANewLandingPage"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify setResponseHeaders Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('setResponseHeaders')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-post:/landingpage/template:application/json:newtoms_landing_page_exp_api-configTest" description="Test">
+        <mock:when messageProcessor="mule:sub-flow" doc:name="Mock - postANewLandingPage">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('postANewLandingPage')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[flowVars.expectedUpdateDocumentTemplatesById]" mimeType="application/java"/>
+        </mock:when>
+        <flow-ref name="setCreateDocumentConfigRequest" doc:name="setCreateDocumentConfigRequest"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <flow-ref name="post:/landingpage/template:application/json:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to post:/landingpage/template:application/json:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify postANewLandingPage Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('postANewLandingPage')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAPayloadWhenSetResponseHeadersThenSetContentType" description="GivenAPayloadWhenSetResponseHeadersThenSetContentType">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="setResponseHeaders" doc:name="Flow-ref to setResponseHeaders"/>
+        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set Content-Type Property']"/>
+                <mock:with-attribute name="propertyName" whereValue="Content-Type"/>
+                <mock:with-attribute name="value" whereValue="application/json"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAPayloadWhenSetResponseHeadersThenSetAccessControlAllowOrigin" description="GivenAPayloadWhenSetResponseHeadersThenSetAccessControlAllowOrigin">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="setResponseHeaders" doc:name="Flow-ref to setResponseHeaders"/>
+        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set Access-Control-Allow-Origin Property']"/>
+                <mock:with-attribute name="propertyName" whereValue="Access-Control-Allow-Origin"/>
+                <mock:with-attribute name="value" whereValue="*"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenAPayloadWhenSetResponseHeadersThenSetAccessControlAllowMethods" description="GivenAPayloadWhenSetResponseHeadersThenSetAccessControlAllowMethods">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="setResponseHeaders" doc:name="Flow-ref to setResponseHeaders"/>
+        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set Access-Control-Allow-Methods Property']"/>
+                <mock:with-attribute name="propertyName" whereValue="Access-Control-Allow-Methods"/>
+                <mock:with-attribute name="value" whereValue="GET,HEAD,PUT,PATCH,POST,DELETE"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenARequestWhenCheckOptionRequestProcessThenReturnANullResponse" description="GivenARequestWhenCheckOptionRequestProcessThenReturnANullResponse">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="optionRequestProcess" doc:name="Flow-ref to optionRequestProcess"/>
+        <munit:assert-null doc:name="Assert Null Payload"/>
+    </munit:test>
+    <munit:test name="GivenARequestWhenCheckOptionRequestProcessThenSetResponseHeaders" description="GivenARequestWhenCheckOptionRequestProcessThenSetResponseHeaders">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="optionRequestProcess" doc:name="Flow-ref to optionRequestProcess"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify setResponseHeaders Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('setResponseHeaders')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="GivenARequestWhenCheckOptionRequestProcessThenSetAccessControlAllowHeaders" description="GivenARequestWhenCheckOptionRequestProcessThenSetAccessControlAllowHeaders">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="optionRequestProcess" doc:name="Flow-ref to optionRequestProcess"/>
+        <mock:verify-call messageProcessor="mule:set-property" doc:name="Verify set Content-Type Property Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['set Access-Control-Allow-Headers Property']"/>
+                <mock:with-attribute name="propertyName" whereValue="Access-Control-Allow-Headers"/>
+                <mock:with-attribute name="value" whereValue="#['Origin, X-Requested-With, Content-Type']"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-options:/landingpage/lead:newtoms_landing_page_exp_api-configTest" description="Test">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="options:/landingpage/lead:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to options:/landingpage/lead:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify optionRequestProcess Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('optionRequestProcess')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-options:/landingpage/template:newtoms_landing_page_exp_api-configTest" description="Test">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="options:/landingpage/template:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to options:/landingpage/template:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify optionRequestProcess Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('optionRequestProcess')]"/>
+            </mock:with-attributes>
+        </mock:verify-call>
+    </munit:test>
+    <munit:test name="newtoms_landing_page_exp_api-test-suite-options:/landingpage/template/{id}:newtoms_landing_page_exp_api-configTest" description="Test">
+        <munit:set payload="#[]" doc:name="Set Message"/>
+        <munit:set-null-payload doc:name="Set Null Payload"/>
+        <flow-ref name="options:/landingpage/template/{id}:newtoms_landing_page_exp_api-config" doc:name="Flow-ref to options:/landingpage/template/{id}:newtoms_landing_page_exp_api-config"/>
+        <mock:verify-call messageProcessor="mule:sub-flow" doc:name="Verify optionRequestProcess Call">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('optionRequestProcess')]"/>
             </mock:with-attributes>
         </mock:verify-call>
     </munit:test>
